@@ -28,8 +28,8 @@ end)
 RegisterServerEvent('slrn_rolldice:server:random', function(sourceId, dices, sides)
     local callerLoc = GetEntityCoords(GetPlayerPed(sourceId))
     local tabler = {}
-    for i=1, dices do
-        table.insert(tabler, math.random(1, sides))
+    for i = 1, dices do
+        tabler[i] = math.random(1, sides)
     end
     local event = sides == 2 and 'slrn_rolldice:client:flipCoin' or 'slrn_rolldice:client:rollDice'
     TriggerClientEvent(event, -1, sourceId, tabler, sides, callerLoc)
