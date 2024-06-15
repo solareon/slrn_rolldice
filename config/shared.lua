@@ -2,6 +2,7 @@ return {
     useCommand = true,
     rollCommand = 'roll',
     flipCommand = 'flip',
+    slipsCommand = 'slips',
     giveCoinSlip = true,
     giveFlipSlip = false,
     maxFlips = 10,

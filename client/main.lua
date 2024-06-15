@@ -1,4 +1,5 @@
 local config = require 'config.shared'
+local recordSlips = true
 
 local function distCheck(location)
     local coords = GetEntityCoords(cache.ped, false)
@@ -65,7 +66,7 @@ local function showRoll(text, sourceId)
     CreateThread(function()
         local displayTime = config.showTime * 1000 + GetGameTimer()
         while displayTime > GetGameTimer() do
-            DrawText3D(text, currentCoords)
+            qbx.drawText3d({text = text, coords = currentCoords})
             Wait(0)
         end
     end)
@@ -76,13 +77,13 @@ local function showFlip(text, sourceId)
         local displayTime = config.showTime * 1000 + GetGameTimer()
         while displayTime > GetGameTimer() do
             local currentCoords = GetOffsetFromEntityInWorldCoords(GetPlayerPed(GetPlayerFromServerId(sourceId)), 0.0, 0.5, 0.4)
-            DrawText3D(text, currentCoords)
+            qbx.drawText3d({text = text, coords = currentCoords})
             Wait(0)
         end
     end)
 end
 
-RegisterNetEvent('slrn-rolldice:client:rollDice', function(sourceId, rollTable, sides, location)
+RegisterNetEvent('slrn_rolldice:client:rollDice', function(sourceId, rollTable, sides, location)
     if not distCheck(location) then return end
 	local rollString = createRollString(rollTable, sides)
     SetTimeout(2200, function()
@@ -92,12 +93,12 @@ RegisterNetEvent('slrn-rolldice:client:rollDice', function(sourceId, rollTable, 
         local animDict = 'anim@mp_player_intcelebrationmale@wank'
         requestAnimDictLoad(animDict)
         diceRollAnimation(animDict)
-        if config.giveCoinSlip then lib.callback('slrn-rolldice:server:getNote', false, function () end, 'roll', rollString) end
+        if config.giveCoinSlip and recordSlips then lib.callback('slrn_rolldice:server:getNote', false, function () end, 'roll', rollString) end
 	end
-	
+
 end)
 
-RegisterNetEvent('slrn-rolldice:client:flipCoin', function(sourceId, flipTable, _, location)
+RegisterNetEvent('slrn_rolldice:client:flipCoin', function(sourceId, flipTable, _, location)
     if not distCheck(location) then return end
 	local flipString = createFlipString(flipTable)
     SetTimeout(3050, function()
@@ -107,8 +108,14 @@ RegisterNetEvent('slrn-rolldice:client:flipCoin', function(sourceId, flipTable, 
         local animDict = 'anim@mp_player_intcelebrationmale@coin_roll_and_toss'
         requestAnimDictLoad(animDict)
         flipCoinAnimation(animDict)
-        if config.giveFlipSlip then lib.callback('slrn-rolldice:server:getNote', false, function () end, 'flip', flipString) end
+        if config.giveFlipSlip and recordSlips then lib.callback('slrn_rolldice:server:getNote', false, function () end, 'flip', flipString) end
 	end
+end)
+
+RegisterNetEvent('slrn_rolldice:client:toggleSlips', function()
+    recordSlips = not recordSlips
+    local notify = recordSlips and 'You are saving your slips' or 'You are not saving your slips'
+    exports.qbx_core:Notify(notify)
 end)
 
 exports.ox_inventory:displayMetadata({
