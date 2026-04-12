@@ -1,6 +1,9 @@
 # slrn_rolldice
 A dice rolling and coin flip script for Qbox.
 
+# [Red40 Development](https://red40.dev/scripts)
+Like this resource and want to support further development? Checkout my store [Red40 Development](https://red40.dev/scripts)
+
 # Options
 Simple config options for max dice / flips and if you want the player to get a note or not. commands can be changed to fit your server.
 
